@@ -9,5 +9,5 @@ Scrapping Utilities Class Name: TokopediaScrapperUtil
 Generated filename : Product_{timestamp}.csv
 
 How to get generated product file:
-* run ProductServiceImplTest
+* run ProductServiceImplTest, or
 * open and run the API from swagger at http://localhost:8029/swagger-ui.html#/product-controller/findProductsFileUsingGET
