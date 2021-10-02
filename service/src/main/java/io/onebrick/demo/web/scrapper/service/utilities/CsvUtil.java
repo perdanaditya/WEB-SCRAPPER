@@ -8,6 +8,7 @@ import com.opencsv.exceptions.CsvException;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.util.Date;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ByteArrayResource;
@@ -20,6 +21,7 @@ public class CsvUtil {
   private CsvUtil() {
   }
   public static <T> ByteArrayResource generateCsv(String[] columns, List<T> objectList, Class<T> clazz) {
+    log.info("Generating csv file");
     try {
       ByteArrayOutputStream stream = new ByteArrayOutputStream();
       OutputStreamWriter outputStreamWriter = new OutputStreamWriter(stream);
@@ -32,6 +34,7 @@ public class CsvUtil {
       writer.writeNext(columns);
       beanToCsv.write(objectList);
       outputStreamWriter.flush();
+      log.info("Generate csv file complete at {}", new Date());
       return new ByteArrayResource(stream.toByteArray());
     } catch (CsvException | IOException e) {
       log.error("failed parse to csv columns={} objectList={} class={}", columns, objectList, clazz, e);

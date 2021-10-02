@@ -9,7 +9,7 @@ public class TokopediaConstant {
   public static final String PAGINATION = "[class='css-txlndr-unf-pagination']";
   public static final String PRODUCT_ELEMENT = "[class='css-bk6tzz e1nlzfl3']";
   public static final String PRODUCT_CONTAINER = "a[data-testid='lnkProductContainer']";
-  public static final String IMAGE_ELEMENT = "[data-testid='PDPImageMain']";
+  public static final String WISHLIST_BUTTON = "[data-testid='btnPDPFooterWishlist']";
   public static final String PRODUCT_NAME = "[data-testid='lblPDPDetailProductName']";
   public static final String PRODUCT_DESCRIPTION = "[data-testid='lblPDPDescriptionProduk']";
   public static final String PRODUCT_PRICE = "[data-testid='lblPDPDetailProductPrice']";

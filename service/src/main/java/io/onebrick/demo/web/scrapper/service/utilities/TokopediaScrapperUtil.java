@@ -19,7 +19,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import lombok.extern.slf4j.Slf4j;
-import reactor.core.publisher.Flux;
 
 /**
  * @author Rizky Perdana
@@ -37,9 +36,9 @@ public class TokopediaScrapperUtil {
   private TokopediaScrapperUtil() {
   }
 
-  public static Flux<Product> findProducts(TokopediaProperties properties) {
+  public static List<Product> findProducts(TokopediaProperties properties) {
     log.info("Start scrapping product from Tokopedia at {}", new Date());
-    return Flux.fromIterable(Try.of(() -> {
+    return Try.of(() -> {
       Playwright playwright = Playwright.create();
       Browser browser = playwright.chromium()
           .launch(new BrowserType.LaunchOptions().setHeadless(properties.isHeadless()));
@@ -56,10 +55,11 @@ public class TokopediaScrapperUtil {
     }).recover(throwable -> {
       log.error("[findProducts.scrap]", throwable);
       return null;
-    }).get());
+    }).get();
   }
 
-  private static List<Product> extractProducts(Page page, BrowserContext context, TokopediaProperties properties) {
+  private static List<Product> extractProducts(Page page, BrowserContext context,
+      TokopediaProperties properties) {
     log.info("Extracting product from Tokopedia");
     List<Product> products = new ArrayList<>();
     return Try.of(() -> {
@@ -96,7 +96,7 @@ public class TokopediaScrapperUtil {
       if (Objects.nonNull(url)) {
         Page productPage = context.newPage();
         productPage.navigate(url);
-        productPage.waitForSelector(TokopediaConstant.IMAGE_ELEMENT, selectorOptions);
+        productPage.waitForSelector(TokopediaConstant.WISHLIST_BUTTON, selectorOptions);
         String productName = getText(productPage, TokopediaConstant.PRODUCT_NAME);
         String description = getText(productPage, TokopediaConstant.PRODUCT_DESCRIPTION);
         String price = getText(productPage, TokopediaConstant.PRODUCT_PRICE);
@@ -120,6 +120,7 @@ public class TokopediaScrapperUtil {
       }
     }
   }
+
   private static void loadAllData(Page page, Page.WaitForSelectorOptions selectorOptions) {
     page.waitForSelector(TokopediaConstant.PRODUCT_LIST, selectorOptions);
     page.evaluate("window.scrollTo(0, document.body.scrollHeight)");

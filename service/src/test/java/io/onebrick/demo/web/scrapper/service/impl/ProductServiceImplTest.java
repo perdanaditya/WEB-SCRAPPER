@@ -15,7 +15,6 @@ import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.test.util.ReflectionTestUtils;
-import reactor.test.StepVerifier;
 
 /**
  * @author Rizky Perdana
@@ -31,9 +30,9 @@ public class ProductServiceImplTest {
   public void before() {
     initMocks(this);
     TokopediaProperties properties = new TokopediaProperties();
-    properties.setDataLimit(1);
+    properties.setDataLimit(100);
     properties.setCsvHeader(
-        new String[]{"Product Name", "Description", "Image Url", "Price", "Rate", "Store Name"});
+        new String[]{"productName", "description", "imageUrl", "price", "rate", "storeName"});
     properties.setHeadless(true);
     properties.setUserAgent(
         "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.61 Safari/537.36");
@@ -44,13 +43,9 @@ public class ProductServiceImplTest {
 
   @Test
   public void findProductsFile() {
-    StepVerifier.create(productService.getProductsCsv())
-        .assertNext(byteArrayResource -> {
-          Assert.assertNotNull(byteArrayResource);
-          createFile(byteArrayResource);
-        })
-        .expectComplete()
-        .verify();
+    ByteArrayResource byteArrayResource = productService.getProductsCsv();
+    Assert.assertNotNull(byteArrayResource);
+    createFile(byteArrayResource);
   }
 
   private void createFile(ByteArrayResource byteArrayResource) {
@@ -62,7 +57,7 @@ public class ProductServiceImplTest {
         log.error("createFile", e);
       }
     }
-    try (FileOutputStream fos = new FileOutputStream("pathname")) {
+    try (FileOutputStream fos = new FileOutputStream(file)) {
       fos.write(byteArrayResource.getByteArray());
     } catch (Exception e) {
       log.error("createFile", e);
