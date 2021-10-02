@@ -48,7 +48,7 @@ public class TokopediaScrapperUtil {
           .setJavaScriptEnabled(true));
       Page page = context.newPage();
       List<Product> products = extractProducts(page, context, properties);
-      log.info("Product size: {}", products.size());
+      log.info("Successfully extract {} products", products.size());
 
       page.close();
       browser.close();
@@ -90,31 +90,29 @@ public class TokopediaScrapperUtil {
     for (ElementHandle elementHandle : elementHandles) {
       ElementHandle handle = elementHandle.querySelector(TokopediaConstant.PRODUCT_CONTAINER);
       String url = handle.getAttribute("href");
-      if (TokopediaScrapperUtil.isUrlContainsPromo(url)) {
-        url = TokopediaScrapperUtil.cleanupUrl(url);
+      if (isUrlContainsPromo(url)) {
+        url = cleanupUrl(url);
       }
       if (Objects.nonNull(url)) {
         Page productPage = context.newPage();
         productPage.navigate(url);
         productPage.waitForSelector(TokopediaConstant.IMAGE_ELEMENT, selectorOptions);
-        String productName = TokopediaScrapperUtil
-            .getText(productPage, TokopediaConstant.PRODUCT_NAME);
-        String description = TokopediaScrapperUtil
-            .getText(productPage, TokopediaConstant.PRODUCT_DESCRIPTION);
-        String price = TokopediaScrapperUtil.getText(productPage, TokopediaConstant.PRODUCT_PRICE);
-        String rate = TokopediaScrapperUtil.getText(productPage, TokopediaConstant.PRODUCT_RATE);
-        String storeName = TokopediaScrapperUtil.getText(productPage, TokopediaConstant.STORE_NAME);
+        String productName = getText(productPage, TokopediaConstant.PRODUCT_NAME);
+        String description = getText(productPage, TokopediaConstant.PRODUCT_DESCRIPTION);
+        String price = getText(productPage, TokopediaConstant.PRODUCT_PRICE);
+        String rate = getText(productPage, TokopediaConstant.PRODUCT_RATE);
+        String storeName = getText(productPage, TokopediaConstant.STORE_NAME);
         String imageUrl = page
             .getAttribute(TokopediaConstant.PRODUCT_IMAGE, TokopediaConstant.SOURCE_ATTRIBUTE);
         products.add(Product.builder()
             .productName(productName)
             .description(description)
             .imageUrl(imageUrl)
-            .price(TokopediaScrapperUtil.getPrice(price))
+            .price(getPrice(price))
             .rate(Objects.nonNull(rate) ? Double.parseDouble(rate) : 0D)
             .storeName(storeName)
             .build());
-        log.debug("Products size: {}", products.size());
+        log.info("Products extracted: {}", products.size());
         productPage.close();
       }
       if (products.size() == dataLimit) {
@@ -145,7 +143,7 @@ public class TokopediaScrapperUtil {
   private static String getText(Page page, String selector) {
     return Try.of(() -> page.innerText(selector))
         .recover(throwable -> {
-          log.error("Get inner text error", throwable);
+          log.error("Get inner text error with selector {}", selector);
           return null;
         }).get();
   }
