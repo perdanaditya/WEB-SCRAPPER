@@ -20,6 +20,8 @@
     <playwright.version>1.9.0-alpha-0</playwright.version>
     <vavr.version>0.10.3</vavr.version>
     <opencsv.version>5.3</opencsv.version>
+    <retrofit.version>2.7.1</retrofit.version>
+    <async.http.client.version>2.12.2</async.http.client.version>
   </properties>
 
   <dependencyManagement>
@@ -65,9 +67,23 @@
         <artifactId>opencsv</artifactId>
         <version>${opencsv.version}</version>
       </dependency>
+      <dependency>
+        <groupId>com.squareup.retrofit2</groupId>
+        <artifactId>converter-jackson</artifactId>
+        <version>${retrofit.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.asynchttpclient</groupId>
+        <artifactId>async-http-client</artifactId>
+        <version>${async.http.client.version}</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
   <dependencies>
+    <dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-webflux</artifactId>
+  </dependency>
     <dependency>
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
